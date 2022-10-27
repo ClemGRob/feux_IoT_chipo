@@ -1,0 +1,14 @@
+PC : 
+    red                 light goes to red
+    green               light goes to green
+
+arduino:
+    red                 car can't goes
+    green               car can goes
+    green_to_orange     car can goes for a short time
+    orange_to_red       car can't goes
+    orange              car can't goes
+    red_to_green        car can't goes for a short time
+    orange_blinking     light broken
+
+

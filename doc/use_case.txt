@@ -1,0 +1,12 @@
+no priority control:
+    if there is no car, both light stay or become red
+    if there is a car on one of the two road, the opposit light become or stay red,
+        and when it is done, the other one become green
+    if there is car on both road, the lights will alternate between red end green. each will stay green during 30s (Parameters)
+
+with priority control:
+    the priority light will become green, and the not priority one will become red
+    only one road can be prioritary
+
+
+
