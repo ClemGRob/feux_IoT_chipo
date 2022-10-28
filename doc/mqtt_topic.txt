@@ -25,6 +25,7 @@ values :
     /traffic_lights_order/light_1|light_2
         red
         green
+        
     /traffic_lights_priority_command/light_1|light_2
         $id:demmande
         $id:release

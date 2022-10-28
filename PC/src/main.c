@@ -118,9 +118,16 @@ void wright_mqtt(char* topic, char* info)
 
 }
 
-void manager(char* msg)
+void manager(char* msg,char* topic)
 {
-    if
+    if(strcmp(topic,  green))
+    {
+
+    } 
+    if(strcmp(msg,  green))
+    {
+
+    }
 
     
 }
