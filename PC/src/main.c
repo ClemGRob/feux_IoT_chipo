@@ -51,19 +51,19 @@ void switch_lights()
 /*light goes from red to green or the oposit, same for light 2, but other collor*/
 {
     if (light1_ordered_state == green)
-        light_1_red()
-        light_1_green()
+        {light_1_red()
+        light_1_green()}
     else
-        light_2_green()
-        light_2_red()
+        {light_2_green()
+        light_2_red()}
   
 }
 
 void all_light_red()
 /*all light goes red*/
 {
-    wright_mqtt("/traffic_lights_order/light_1","red");
-    wright_mqtt("/traffic_lights_order/light_2","red");
+    light_2_red();
+    light_1_red();
 }
 
 void deal_with_command(short light_id)
@@ -82,7 +82,6 @@ void deal_with_command(short light_id)
         if(!strcmp(light2_ordered_state,  green))
         exit(0);
     }
-    if
 }
 
 
@@ -120,14 +119,27 @@ void wright_mqtt(char* topic, char* info)
 
 void manager(char* msg,char* topic)
 {
-    if(strcmp(topic,  green))
+    if(!strcmp(topic,  "traffic_lights_current_state"))//// deal with light1 and 2
     {
+        if(!strcmp(msg,  "red")||!strcmp(msg,  "orange"))
+        {
 
-    } 
-    if(strcmp(msg,  green))
+        }
+        else if(!strcmp(msg,  "green"))
+        {
+
+        }
+
+    }
+    else if(!strcmp(topic,  "car_position_info"))
     {
 
     }
+    else if(!strcmp(topic,  "traffic_lights_priority_command"))
+    {
+
+    }
+   
 
     
 }
