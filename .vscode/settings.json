@@ -1,6 +1,18 @@
 {
+    "arduino.path":"~/Documents/M2rob/IOT/arduino",
+    "arduino.commandPath": "arduino-ide.exe",
+    "arduino.logLevel": "info",
+    "arduino.allowPDEFiletype": false,
+    "arduino.enableUSBDetection": true,
+    "arduino.disableTestingOpen": false,
+    "arduino.skipHeaderProvider": false,
     "files.associations": {
-        "*.arduino": "cpp"
+        "*.arduino": "cpp",
+        "string.h": "c",
+        "string_view": "c",
+        "sstream": "c",
+        "random": "c",
+        "iterator": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

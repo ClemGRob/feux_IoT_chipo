@@ -18,52 +18,75 @@ const char* green="green";
 const char* red_to_green="red_to_green";
 const char* green_to_red="green_to_red";
 
+int light_set=1;
+int changeable = true;
+int changeable_priority = 0;
+
+int current_green_light = 0;
+int next_green_light = 0;
 
 
 /**********DONE****************/
 
-void light_1_red()
+void light_1_red(struct mosquitto *mosq)
 {
-    wright_mqtt("/traffic_lights_order/light_1","red");
-    light1_ordered_state = red
+    if(current_green_light ==1){
+    wright_mqtt(mosq,"traffic_lights_order/light_1","orange");
+    sleep(1);}
+    wright_mqtt(mosq,"traffic_lights_order/light_1","red");
+    light1_ordered_state = red;
 }
 
-void light_1_green()
+void light_1_green(struct mosquitto *mosq)
 {
-    wright_mqtt("/traffic_lights_order/light_1","red");
-    light1_ordered_state = green
+    wright_mqtt(mosq,"traffic_lights_order/light_1","green");
+    light1_ordered_state = green;
+    current_green_light = 1;
+
 }
 
-void light_2_red()
+void light_2_red(struct mosquitto *mosq)
 {
-    wright_mqtt("/traffic_lights_order/light_2","red");
-    light1_ordered_state = red
+   if(current_green_light ==2)
+    {wright_mqtt(mosq,"traffic_lights_order/light_2","orange");
+    sleep(1);}
+    wright_mqtt(mosq,"traffic_lights_order/light_2","red");
+    light1_ordered_state = red;
 }
 
-void light_2_green()
+void light_2_green(struct mosquitto *mosq)
 {
-    wright_mqtt("/traffic_lights_order/light_2","red");
-    light1_ordered_state = green
+    wright_mqtt(mosq,"traffic_lights_order/light_2","green");
+    light1_ordered_state = green;
+    current_green_light = 2;
 }
 
 
-void switch_lights()
+void switch_lights(struct mosquitto *mosq)
 /*light goes from red to green or the oposit, same for light 2, but other collor*/
 {
     if (light1_ordered_state == green)
-        {light_1_red()
-        light_1_green()}
+    {
+        light_1_red(mosq);
+        light_2_green(mosq);
+    }
     else
-        {light_2_green()
-        light_2_red()}
+    {
+        light_2_red(mosq);
+        light_1_green(mosq);
+        
+    }
+    current_green_light = next_green_light;
+    next_green_light = 0;
   
 }
 
-void all_light_red()
+void all_light_red(struct mosquitto *mosq)
 /*all light goes red*/
 {
-    light_2_red();
-    light_1_red();
+    light_2_red(mosq);
+    light_1_red(mosq);
+    current_green_light = 0;
 }
 
 void deal_with_command(short light_id)
@@ -88,60 +111,169 @@ void deal_with_command(short light_id)
 
 /***********TO DO************/
 
-void thread_function()
+void restart_changeable(void* p)
 {
-    while (1)
+    if(changeable_priority==0)
     {
-        if(timer > 30.0)
+    sleep(10);
+    
+    
+    if(next_green_light == current_green_light ||current_green_light !=0) 
         {
-            restart_timer();
-            all_light_red();
+            printf("\n\n\n\n\nprobleme\n\n\n\n\n\n");
+            all_light_red(p);
+        
         }
+    
+    else if (next_green_light == 0)
+    {
+        printf("\n\n!!!same value!!\n");
+        all_light_red(p);
+        next_green_light = 0;
+        current_green_light = 0;
 
-        // case not correct light
-        if(timer > 10.0)
-        {
-            restart_timer();
-            all_light_red();
-        }
+
     }
+    else
+    {
+        printf("\n\n!!!diff value!!\n");
+        //switch_lights(p);
+        //restart_changeable(p);
+    }
+    }
+    else
+    {
+        sleep(10);
+        restart_changeable(p);
+    }
+    changeable = true;
 }
+
+
+
+
+
 void restart_timer(){}
 
 
 void setup_mqtt(){}
 
 
-void wright_mqtt(char* topic, char* info)
+void wright_mqtt(struct mosquitto * mosq,char* topic, char* info)
 {
+    mosquitto_publish(mosq, NULL, topic, 60, info, 0, false);
 
 }
 
-void manager(char* msg,char* topic)
+void manager(struct mosquitto *mosq,char* msg,char* topic)
 {
-    if(!strcmp(topic,  "traffic_lights_current_state"))//// deal with light1 and 2
+    int separator_topic = strcspn(topic,"/");
+    char delimiter[] = "/";
+    char *main_topic = strtok(topic, delimiter);
+    char *secundary_topic = strtok(NULL, delimiter);
+    printf("main_topic : %s",main_topic);
+    printf("secundary_topic : %s",secundary_topic);
+
+
+    if(!strcmp(main_topic,  "car_position_info"))
     {
-        if(!strcmp(msg,  "red")||!strcmp(msg,  "orange"))
-        {
+        
+        if(!strcmp(secundary_topic,  "light_1"))
+        {   
+            if(current_green_light != 1)
+            {
+                if(changeable == true && changeable_priority == 0)
+                {
+                    light_2_red(mosq);
+                    light_1_green(mosq);
+                    
 
+                    changeable = false;
+                    pthread_t id;
+                    int a = 0;
+                    pthread_create(&id, NULL, restart_changeable, mosq);
+                }
+                else if(current_green_light==0)
+                {
+                    next_green_light = 1;
+                }
+            }
         }
-        else if(!strcmp(msg,  "green"))
+
+        else
         {
+            if(current_green_light != 2)
+            {
+                if(changeable == true && changeable_priority == 0)
+                {
+                    light_1_red(mosq);
+                    light_2_green(mosq);
+                    
 
+                    changeable = false;
+                    pthread_t id;
+                    int a = 0;
+                    pthread_create(&id, NULL, restart_changeable, mosq);
+                }
+                else if(next_green_light==0)
+                {
+                    next_green_light = 2;
+                }
+            }
         }
+            
 
-    }
-    else if(!strcmp(topic,  "car_position_info"))
-    {
 
-    }
+
+    }      
+        
+    
     else if(!strcmp(topic,  "traffic_lights_priority_command"))
     {
+       
+        if(!strcmp(secundary_topic,  "light_1"))
+        {
+            
 
-    }
-   
-
-    
+            if(!strcmp(msg,  "demand"))
+            {
+                if(changeable_priority == 0)
+                {
+                    printf("\n\n\n\naaaaa\n");
+                    light_2_red(mosq);
+                    light_1_green(mosq);
+                    
+                    changeable_priority = 1;
+                }
+            }
+            else if(!strcmp(msg,  "release") && changeable_priority == 1)
+            {
+                changeable_priority = 0;
+                all_light_red(mosq);
+            }
+            
+        }
+        else
+        {
+            if(!strcmp(msg,  "demand"))
+            {
+                if(changeable_priority == 0)
+                {
+                    light_1_red(mosq);
+                    light_2_green(mosq);
+                    
+                    changeable_priority = 2;
+                }
+            }
+            else if(!strcmp(msg,  "release") && changeable_priority == 2)
+            {
+                changeable_priority = 0;
+                all_light_red(mosq);
+            }
+            
+        }
+        
+    }    
 }
 
 
@@ -154,16 +286,17 @@ void on_connect(struct mosquitto *mosq, void *obj, int rc) {
 		printf("Error with result code: %d\n", rc);
 		exit(-1);
 	}
-	mosquitto_subscribe(mosq, NULL, "/test/#", 0);
+	mosquitto_subscribe(mosq, NULL, "#", 0);
 }
 
-void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
+void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg)
+{
 	printf("New message with topic %s: %s\n", msg->topic, (char *) msg->payload);
-    manager((char *) msg->payload,msg->topic);
+    manager(mosq,(char *) msg->payload,msg->topic);
 	printf("\n\n--%s--\n\n", (char *) msg->payload);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     int rc, id=12;
 
@@ -191,5 +324,4 @@ int main()
 	mosquitto_lib_cleanup();
 
 	return 0;
-
 }

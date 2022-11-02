@@ -1,0 +1,5 @@
+nmcli dev wifi hotspot ifname wlp3s0f0 ssid "Mooa" password "okokokok"
+
+
+sudo systemctl restart mosquitto
+cd /home/clem/Documents/M2rob/IOT/projet/feux_IoT_chipo/PC

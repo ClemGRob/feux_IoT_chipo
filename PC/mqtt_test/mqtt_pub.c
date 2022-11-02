@@ -2,10 +2,6 @@
 #include <unistd.h>
 #include <mosquitto.h>
 
-void setup()
-{
-	
-}
 
 int main(int argc, char *argv[]){
 	int rc;
@@ -25,7 +21,7 @@ int main(int argc, char *argv[]){
 	
 
 	while(1){
-		mosquitto_publish(mosq, NULL, argv[3], 60, argv[2], 0, false);
+		mosquitto_publish(mosq, NULL, argv[2], 60, argv[3], 0, false);
 		sleep(1);
 		
 	}

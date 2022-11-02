@@ -8,7 +8,11 @@ char pass[] = "okokokok";    // your network password (use for WPA, or use as ke
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
 
-const char broker[] = "192.168.206.146";
+// const char broker[] = "192.168.206.146"; // android
+//const char broker[] = "192.168.206.146"; //
+const char broker[]="10.42.0.1";
+//const char broker[] = "192.168.206.15";// android co, PC broker
+//const char broker[] = "192.168.163.15";
 int        port     = 1883;
 const char topic[]  = "feux_tricolor";
 
@@ -66,18 +70,26 @@ void setup() {
 void loop() {
   // call poll() regularly to allow the library to send MQTT keep alive which
   // avoids being disconnected by the broker
+  delay(50);
   mqttClient.poll();
 
   unsigned long currentMillis = millis();
+  int i = 0;
 
   if (currentMillis - previousMillis >= interval) {
     // save the last time a message was sent
     previousMillis = currentMillis;
+    for(int i = 0; i<50; i++)
 
     //record random value from A0, A1 and A2
+    {wright("/test/", "prout");
+    wright("/test/", "prout2");
+    delay(5000);
     
 
     // send message, the Print interface can be used to set the message contents
-    Serial.println();
+    Serial.println("was?\n");
+    Serial.println(i);
+    }
   }
 }
