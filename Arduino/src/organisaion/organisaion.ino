@@ -1,7 +1,7 @@
 /**
  * @file organisaion.cpp
  * 
- * @author clement and his internet friends
+ * @author clement 
  * @brief 
  * @version 0.1
  * @date 2022-11-01
@@ -187,7 +187,7 @@ int Traf_light_color(int couleur,int select_feu) {
     }
     else
     {
-      Serial.print("t'es un bouffon");
+      Serial.print("erreur");
     }
   }
 }

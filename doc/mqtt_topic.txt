@@ -10,23 +10,16 @@ main topic :
 sub_topic : 
     light_1
     light_2
-
-
-values :
-    /traffic_lights_current_state/light_1|light_2
-        red
-        green
-        orange
     
-    /car_position_info/light_1|light_2
+    car_position_info/light_1|light_2
         presence
         absence
 
-    /traffic_lights_order/light_1|light_2
+    traffic_lights_order/light_1|light_2
         red
         green
         
-    /traffic_lights_priority_command/light_1|light_2
+    traffic_lights_priority_command/light_1|light_2
         $id:demmande
         $id:release
 

@@ -1,1 +1,0 @@
-gcc -Wall src/main.c -o main.exe -lpthread -lmosquitto
