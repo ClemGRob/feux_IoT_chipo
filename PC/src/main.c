@@ -113,39 +113,31 @@ void deal_with_command(short light_id)
 
 void restart_changeable(void* p)
 {
-    if(changeable_priority==0)
-    {
     sleep(10);
-    
-    
-    if(next_green_light == current_green_light ||current_green_light !=0) 
-        {
-            printf("\n\n\n\n\nprobleme\n\n\n\n\n\n");
-            all_light_red(p);
-        
-        }
-    
-    else if (next_green_light == 0)
+    /*if(changeable_priority==0)
     {
-        printf("\n\n!!!same value!!\n");
-        all_light_red(p);
-        next_green_light = 0;
-        current_green_light = 0;
+        if(next_green_light == current_green_light ||current_green_light !=0) 
+            {
+                printf("\n\n\n\n\nprobleme\n\n\n\n\n\n");
+                all_light_red(p);
+            
+            }
+        
+        else if (next_green_light == 0)
+        {
+            printf("\n\n!!!same value!!\n");
+            all_light_red(p);
+            next_green_light = 0;
+            current_green_light = 0;
 
 
     }
     else
     {
         printf("\n\n!!!diff value!!\n");
-        //switch_lights(p);
-        //restart_changeable(p);
     }
-    }
-    else
-    {
-        sleep(10);
-        restart_changeable(p);
-    }
+    }*/
+    
     changeable = true;
 }
 
